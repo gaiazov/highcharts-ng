@@ -10,17 +10,17 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
   if (window && window.Highcharts) {
     Highcharts = window.Highcharts;
   } else if (module && module.exports === 'highcharts-ng') {
-        Highcharts = require('highcharts');
+    Highcharts = require('highcharts');
   }
 
 
   angular.module('highcharts-ng', [])
     .component('highchart', {
-        bindings: {
-            config: '<',
-            changeDetection: '<'
-          },
-          controller: HighChartNGController
+      bindings: {
+        config: '<',
+        changeDetection: '<'
+      },
+      controller: HighChartNGController
     });
 
   HighChartNGController.$inject = ['$element', '$timeout'];
@@ -37,26 +37,27 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       };
       prevConfig = angular.merge({}, ctrl.config);
       mergedConfig = getMergedOptions($element, ctrl.config, seriesId);
-      ctrl.chart = new Highcharts[getChartType(mergedConfig)](mergedConfig);
+      new Highcharts[getChartType(mergedConfig)](mergedConfig, (chart) => {
 
-      // Fix resizing bug
-      // https://github.com/pablojim/highcharts-ng/issues/550
-      var originalWidth = $element[0].clientWidth;
-      var originalHeight = $element[0].clientHeight;
-      $timeout(function() {
-        if ($element[0].clientWidth !== originalWidth || $element[0].clientHeight !== originalHeight) {
-          if (ctrl.chart && ctrl.chart.reflow) {
+        ctrl.chart = chart;
+
+        // Fix resizing bug
+        // https://github.com/pablojim/highcharts-ng/issues/550
+        var originalWidth = $element[0].clientWidth;
+        var originalHeight = $element[0].clientHeight;
+        $timeout(function () {
+          if ($element[0].clientWidth !== originalWidth || $element[0].clientHeight !== originalHeight) {
             ctrl.chart.reflow();
           }
-        }
-      }, 0, false);
+        }, 0, false);
+      });
     };
 
     this.$doCheck = function() {
       if (!ctrl.chart || !ctrl.chart.series) {
         return;
       }
-      
+
       if(!detector(ctrl.config, prevConfig)) {
         prevConfig = angular.merge({}, ctrl.config);
         mergedConfig = getMergedOptions($element, ctrl.config, seriesId);
@@ -81,19 +82,19 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     };
 
     this.$onDestroy = function() {
-        if (ctrl.chart) {
-          try{
-            ctrl.chart.destroy();
-          }catch(ex){
-            // fail silently as highcharts will throw exception if element doesn't exist
-          }
-
-          $timeout(function(){
-            $element.remove();
-          }, 0);
+      if (ctrl.chart) {
+        try{
+          ctrl.chart.destroy();
+        }catch(ex){
+          // fail silently as highcharts will throw exception if element doesn't exist
         }
-      };
-    }
+
+        $timeout(function(){
+          $element.remove();
+        }, 0);
+      }
+    };
+  }
 
   function getMergedOptions(element, config, seriesId) {
     var mergedOptions = {};
