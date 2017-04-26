@@ -51,7 +51,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     };
 
     this.$doCheck = function() {
-      if (!ctrl.chart) {
+      if (!ctrl.chart || !ctrl.chart.series) {
         return;
       }
       
