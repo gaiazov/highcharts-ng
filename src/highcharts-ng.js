@@ -51,6 +51,10 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
     };
 
     this.$doCheck = function() {
+      if (!ctrl.chart) {
+        return;
+      }
+      
       if(!detector(ctrl.config, prevConfig)) {
         prevConfig = angular.merge({}, ctrl.config);
         mergedConfig = getMergedOptions($element, ctrl.config, seriesId);
