@@ -37,7 +37,7 @@ if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.ex
       };
       prevConfig = angular.merge({}, ctrl.config);
       mergedConfig = getMergedOptions($element, ctrl.config, seriesId);
-      new Highcharts[getChartType(mergedConfig)](mergedConfig, (chart) => {
+      new Highcharts[getChartType(mergedConfig)](mergedConfig, function(chart) {
 
         ctrl.chart = chart;
 
